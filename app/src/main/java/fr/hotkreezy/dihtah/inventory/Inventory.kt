@@ -69,7 +69,7 @@ fun Inventory(
 			},
 			lineLimits = TextFieldLineLimits.SingleLine,
 		)
-		for (item in inventory) {
+		inventory.forEach { item ->
 			ListItem(
 				modifier = Modifier,
 				verticalAlignment = Alignment.CenterVertically,
