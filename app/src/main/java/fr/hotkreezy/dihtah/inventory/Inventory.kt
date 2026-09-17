@@ -2,7 +2,6 @@ package fr.hotkreezy.dihtah.inventory
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.hotkreezy.dihtah.core.ui.theme.DihtahTheme
 
-@Preview(showBackground = true, device = "spec:width=1080px,height=2340px,dpi=440")
+@Preview(showBackground = true)
 @Composable
 private fun InventoryPreview() {
 	DihtahTheme(dynamicColor = false) {
@@ -86,12 +85,7 @@ fun Inventory(
 					}
 				},
 			) {
-				Row(
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.spacedBy(8.dp)
-				) {
-					Text(item.name)
-				}
+				Text(item.name)
 			}
 		}
 	}
