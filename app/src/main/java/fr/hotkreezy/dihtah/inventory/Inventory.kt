@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
@@ -30,9 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +40,7 @@ import fr.hotkreezy.dihtah.core.ui.theme.DihtahTheme
 @Composable
 private fun InventoryPreview() {
 	DihtahTheme(dynamicColor = false) {
-		Inventory()
+		// Inventory()
 	}
 }
 
@@ -52,6 +49,8 @@ data class InventoryItem(val name: String, val quantity: Int, val category: Stri
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Inventory(
+	openBottomSheet: Boolean,
+	onOpenBottomSheet: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	val inventory = remember {
@@ -63,33 +62,16 @@ fun Inventory(
 		)
 	}
 
-	val textFieldState = rememberTextFieldState()
-	var openBottomSheet by remember { mutableStateOf(false) }
 	var selectedItem by remember { mutableStateOf<InventoryItem?>(null) }
 	val bottomSheetState = rememberBottomSheetState(SheetValue.Hidden)
 
 	Column(
 		modifier = modifier.fillMaxSize(),
 	) {
-		OutlinedTextField(
-			state = textFieldState,
-			modifier = Modifier.fillMaxWidth(),
-			label = { Text("Item") },
-			keyboardOptions = KeyboardOptions.Default.copy(
-				imeAction = ImeAction.Done,
-			),
-			onKeyboardAction = {
-				inventory.add(
-					InventoryItem(textFieldState.text.toString(), 1, "food")
-				)
-				textFieldState.clearText()
-			},
-			lineLimits = TextFieldLineLimits.SingleLine,
-		)
 		inventory.forEach { item ->
 			ListItem(
 				onClick = {
-					openBottomSheet = true
+					onOpenBottomSheet(true)
 					selectedItem = item
 				},
 				modifier = Modifier,
@@ -114,49 +96,62 @@ fun Inventory(
 		}
 		if (openBottomSheet) {
 			ModalBottomSheet(
-				onDismissRequest = { openBottomSheet = false },
+				onDismissRequest = { onOpenBottomSheet(false); selectedItem = null },
 				sheetState = bottomSheetState,
 			) {
-				val focusManager = LocalFocusManager.current
-				val nameState = rememberTextFieldState(selectedItem!!.name)
-				val categoryState = rememberTextFieldState(selectedItem!!.category)
-				val quantityState = rememberTextFieldState(selectedItem!!.quantity.toString())
+				val nameState = rememberTextFieldState(selectedItem?.name ?: "")
+				val categoryState = rememberTextFieldState(selectedItem?.category ?: "food")
+				val quantityState = rememberTextFieldState(
+					selectedItem?.quantity?.toString() ?: "1"
+				)
 
 				Column(
 					modifier = Modifier.safeContentPadding()
 				) {
 					TextField(
 						state = nameState,
-						label = "Item",
-						focusManager = focusManager,
 						modifier = Modifier.fillMaxWidth(),
+						label = "Item",
+						keyboardOptions = KeyboardOptions.Default.copy(
+							imeAction = ImeAction.Next,
+						),
 					)
 					TextField(
 						state = categoryState,
-						label = "Category",
-						focusManager = focusManager,
 						modifier = Modifier.fillMaxWidth(),
+						label = "Category",
+						keyboardOptions = KeyboardOptions.Default.copy(
+							imeAction = ImeAction.Next,
+						),
 					)
 					TextField(
 						state = quantityState,
+						modifier = Modifier.fillMaxWidth(),
 						label = "Quantity",
 						keyboardOptions = KeyboardOptions.Default.copy(
 							keyboardType = KeyboardType.Number,
 						),
-						focusManager = focusManager,
-						modifier = Modifier.fillMaxWidth(),
 					)
 					Button(
 						onClick = {
-							val index = inventory.indexOf(selectedItem)
-							if (index != -1) {
+							if (selectedItem == null) {
+								inventory.add(
+									InventoryItem(
+										name = nameState.text.toString(),
+										category = categoryState.text.toString(),
+										quantity = quantityState.text.toString().toIntOrNull() ?: 1
+									)
+								)
+							} else {
+								val index = inventory.indexOf(selectedItem)
 								inventory[index] = InventoryItem(
 									name = nameState.text.toString(),
 									category = categoryState.text.toString(),
-									quantity = quantityState.text.toString().toIntOrNull() ?: 0
+									quantity = quantityState.text.toString().toIntOrNull() ?: 1
 								)
 							}
-							openBottomSheet = false
+							onOpenBottomSheet(false)
+							selectedItem = null
 						},
 						modifier = Modifier.fillMaxWidth(),
 					) { Text("Save") }
@@ -170,7 +165,6 @@ fun Inventory(
 fun TextField(
 	state: TextFieldState,
 	label: String,
-	focusManager: FocusManager,
 	modifier: Modifier = Modifier,
 	keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
@@ -178,10 +172,7 @@ fun TextField(
 		state = state,
 		modifier = modifier,
 		label = { Text(label) },
-		keyboardOptions = keyboardOptions.copy(
-			imeAction = ImeAction.Done,
-		),
-		onKeyboardAction = { focusManager.clearFocus() },
+		keyboardOptions = keyboardOptions,
 		lineLimits = TextFieldLineLimits.SingleLine,
 	)
 }
