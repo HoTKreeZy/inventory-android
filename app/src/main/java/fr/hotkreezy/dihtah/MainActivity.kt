@@ -26,7 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import fr.hotkreezy.dihtah.core.ui.theme.DihtahTheme
-import fr.hotkreezy.dihtah.inventory.Inventory
+import fr.hotkreezy.dihtah.inventory.ui.Inventory
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {

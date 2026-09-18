@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package fr.hotkreezy.dihtah.inventory
+package fr.hotkreezy.dihtah.inventory.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,9 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -63,7 +61,6 @@ fun Inventory(
 	}
 
 	var selectedItem by remember { mutableStateOf<InventoryItem?>(null) }
-	val bottomSheetState = rememberBottomSheetState(SheetValue.Hidden)
 
 	Column(
 		modifier = modifier.fillMaxSize(),
@@ -97,7 +94,6 @@ fun Inventory(
 		if (openBottomSheet) {
 			ModalBottomSheet(
 				onDismissRequest = { onOpenBottomSheet(false); selectedItem = null },
-				sheetState = bottomSheetState,
 			) {
 				val nameState = rememberTextFieldState(selectedItem?.name ?: "")
 				val categoryState = rememberTextFieldState(selectedItem?.category ?: "food")
