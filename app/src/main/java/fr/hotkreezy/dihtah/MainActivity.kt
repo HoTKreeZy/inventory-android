@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 						BottomAppBar {
 							NavigationBar {
 								NavigationBarItem(
-									onClick = {},
+									onClick = { },
 									selected = true,
 									label = { Text("Home") },
 									icon = {
