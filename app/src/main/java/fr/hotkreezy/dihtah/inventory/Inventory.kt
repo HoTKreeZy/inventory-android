@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Badge
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -119,40 +121,30 @@ fun Inventory(
 				val nameState = rememberTextFieldState(selectedItem!!.name)
 				val categoryState = rememberTextFieldState(selectedItem!!.category)
 				val quantityState = rememberTextFieldState(selectedItem!!.quantity.toString())
-				
+
 				Column(
 					modifier = Modifier.safeContentPadding()
 				) {
-					OutlinedTextField(
+					TextField(
 						state = nameState,
+						label = "Item",
+						focusManager = focusManager,
 						modifier = Modifier.fillMaxWidth(),
-						label = { Text("Item") },
-						keyboardOptions = KeyboardOptions.Default.copy(
-							imeAction = ImeAction.Done,
-						),
-						onKeyboardAction = { focusManager.clearFocus() },
-						lineLimits = TextFieldLineLimits.SingleLine,
 					)
-					OutlinedTextField(
+					TextField(
 						state = categoryState,
+						label = "Category",
+						focusManager = focusManager,
 						modifier = Modifier.fillMaxWidth(),
-						label = { Text("Category") },
-						keyboardOptions = KeyboardOptions.Default.copy(
-							imeAction = ImeAction.Done,
-						),
-						onKeyboardAction = { focusManager.clearFocus() },
-						lineLimits = TextFieldLineLimits.SingleLine,
 					)
-					OutlinedTextField(
+					TextField(
 						state = quantityState,
-						modifier = Modifier.fillMaxWidth(),
-						label = { Text("Quantity") },
+						label = "Quantity",
 						keyboardOptions = KeyboardOptions.Default.copy(
-							imeAction = ImeAction.Done,
 							keyboardType = KeyboardType.Number,
 						),
-						onKeyboardAction = { focusManager.clearFocus() },
-						lineLimits = TextFieldLineLimits.SingleLine,
+						focusManager = focusManager,
+						modifier = Modifier.fillMaxWidth(),
 					)
 					Button(
 						onClick = {
@@ -172,4 +164,24 @@ fun Inventory(
 			}
 		}
 	}
+}
+
+@Composable
+fun TextField(
+	state: TextFieldState,
+	label: String,
+	focusManager: FocusManager,
+	modifier: Modifier = Modifier,
+	keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+) {
+	OutlinedTextField(
+		state = state,
+		modifier = modifier,
+		label = { Text(label) },
+		keyboardOptions = keyboardOptions.copy(
+			imeAction = ImeAction.Done,
+		),
+		onKeyboardAction = { focusManager.clearFocus() },
+		lineLimits = TextFieldLineLimits.SingleLine,
+	)
 }
