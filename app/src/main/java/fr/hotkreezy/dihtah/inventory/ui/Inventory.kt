@@ -32,7 +32,16 @@ private fun InventoryPreview() {
 	}
 }
 
-data class InventoryItem(val name: String, val quantity: Int, val category: String)
+data class InventoryItem(
+	val id: Int = nextId++,
+	val name: String,
+	val quantity: Int,
+	val category: String,
+) {
+	companion object {
+		private var nextId = 0
+	}
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,10 +52,10 @@ fun Inventory(
 ) {
 	val inventory = remember {
 		mutableStateListOf(
-			InventoryItem("milk", 2, "food"),
-			InventoryItem("eggs", 20, "food"),
-			InventoryItem("mayo", 4, "food"),
-			InventoryItem("chicken", 16, "food"),
+			InventoryItem(name = "milk", quantity = 2, category = "food"),
+			InventoryItem(name = "eggs", quantity = 20, category = "food"),
+			InventoryItem(name = "mayo", quantity = 4, category = "food"),
+			InventoryItem(name = "chicken", quantity = 16, category = "food"),
 		)
 	}
 
@@ -90,11 +99,21 @@ fun Inventory(
 				},
 				onSaveRequested = { name, category, quantity ->
 					if (selectedItem == null) {
-						inventory.add(InventoryItem(name, quantity, category))
+						inventory.add(
+							InventoryItem(
+								name = name,
+								quantity = quantity,
+								category = category,
+							)
+						)
 					} else {
 						val index = inventory.indexOf(selectedItem)
 						if (index != -1) {
-							inventory[index] = InventoryItem(name, quantity, category)
+							inventory[index] = selectedItem!!.copy(
+								name = name,
+								quantity = quantity,
+								category = category
+							)
 						}
 					}
 					onOpenBottomSheet(false)
