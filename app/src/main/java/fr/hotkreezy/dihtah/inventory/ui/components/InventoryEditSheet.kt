@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import fr.hotkreezy.dihtah.inventory.ui.InventoryItem
+import kotlin.math.floor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +67,7 @@ fun InventoryEditSheet(
 					onSaveRequested(
 						nameState.text.toString(),
 						categoryState.text.toString(),
-						quantityState.text.toString().toIntOrNull() ?: 1
+						floor(quantityState.text.toString().toDouble()).toInt()
 					)
 				},
 				modifier = Modifier.fillMaxWidth(),

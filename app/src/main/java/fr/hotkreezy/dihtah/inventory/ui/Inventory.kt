@@ -101,18 +101,18 @@ fun Inventory(
 					if (selectedItem == null) {
 						inventory.add(
 							InventoryItem(
-								name = name,
+								name = name.trim(),
 								quantity = quantity,
-								category = category,
+								category = category.trim(),
 							)
 						)
 					} else {
 						val index = inventory.indexOf(selectedItem)
 						if (index != -1) {
 							inventory[index] = selectedItem!!.copy(
-								name = name,
+								name = name.trim(),
 								quantity = quantity,
-								category = category
+								category = category.trim(),
 							)
 						}
 					}
